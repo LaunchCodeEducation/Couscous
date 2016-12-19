@@ -30,7 +30,7 @@ Before starting with Couscous, install these requirements.
 
 ### Install Couscous (dev version)
 
-Clone this repo, and from within the project directory run:
+Clone this repo, checkout the `lc_develop` branch, and from within the project directory run:
 
 ```
 $ ./build.sh
