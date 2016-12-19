@@ -38,6 +38,7 @@ return [
 
         DI\get('Couscous\Module\Core\Step\ClearTargetDirectory'),
         DI\get('Couscous\Module\Core\Step\WriteFiles'),
+        DI\get('Couscous\Module\Core\Step\CreateSitemap'),
 
         DI\get('Couscous\Module\Scripts\Step\ExecuteAfterScripts'),
     ],
