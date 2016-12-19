@@ -2,6 +2,8 @@
 layout: home
 ---
 
+[Set up for LaunchCode development](LCDEVELOPMENT.md)
+
 Couscous generates a [GitHub pages](http://pages.github.com/) website from your markdown documentation.
 
 [![Build Status](https://travis-ci.org/CouscousPHP/Couscous.svg?branch=master)](https://travis-ci.org/CouscousPHP/Couscous)
