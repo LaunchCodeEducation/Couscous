@@ -2,7 +2,7 @@
 layout: home
 ---
 
-[Set up for LaunchCode development](LCDEVELOPMENT.md)
+[Setup for LaunchCode development](LCDEVELOPMENT.md)
 
 Couscous generates a [GitHub pages](http://pages.github.com/) website from your markdown documentation.
 
