@@ -4,7 +4,9 @@ We have a customized version of Couscous, so be sure you follow the instructions
 
 ## Setting up
 
-If you don't have `npm` installed, start by doing that. On a Mac, first install [Homebrew](http://brew.sh/) and then `brew install node`.
+- Install [Homebrew](http://brew.sh/)
+- `brew install node`
+- `brew install composer`
 
 ### Requirements
 
@@ -32,6 +34,10 @@ Before starting with Couscous, install these requirements.
 
 Clone this repo, checkout the `lc_develop` branch, and from within the project directory run:
 
+```
+$ composer update
+```
+and then:
 ```
 $ ./build.sh
 ```
