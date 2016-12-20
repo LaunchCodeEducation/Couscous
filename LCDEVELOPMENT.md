@@ -6,7 +6,7 @@ We have a customized version of Couscous, so be sure you follow the instructions
 
 - Install [Homebrew](http://brew.sh/)
 - `brew install node`
-- `brew install composer`
+- `brew install homebrew/php/composer`
 
 ### Requirements
 
