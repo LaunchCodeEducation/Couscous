@@ -24,7 +24,7 @@ Before starting with Couscous, install these requirements.
     $ npm install -g less less-plugin-clean-css
     ```
 
-- Phar generation enabled in `php.ini`. You can find `php.ini` by running `$ php --ini`.
+- Phar generation enabled in `php.ini`. You can find `php.ini` by running `$ php --ini`. This setting is likely already present in your `php.ini` but is likely commented out.
 
     ```
     phar.readonly = Off
@@ -42,7 +42,7 @@ and then:
 $ ./build.sh
 ```
 
-This will build the project to `bin/couscous.phar`, then install the PHP archive to a path on your filesystem.
+This will build the project to `bin/couscous.phar`, then install the PHP archive to a path on your filesystem. The script uses `sudo` so you'll be prompted for your password.
 
 ### Running Couscous in Preview Mode
 
@@ -62,5 +62,5 @@ If you want to work on a project's template, you can do so using preview mode an
 
 ```
 template:
-    # directory: ../Template-Light
+    directory: ../Template-Light
 ```
