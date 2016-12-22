@@ -42,15 +42,15 @@ class CreateSitemap implements Step
 
         if ($sitemap) {
             $metadata = $project->metadata;
-
-            print_r($metadata);
+            $urlList = '';
 
             foreach ($metadata['pageList'] as $page) {
                 $this->logger->debug('Adding {page} to simple sitemap', ['page' => $page]);
                 $pageUrl = $metadata['baseUrl'].'/'.$page;
-                fwrite($sitemap, $pageUrl.PHP_EOL);
+                $sitemap .= $pageUrl.PHP_EOL;
             }
 
+            fwrite($urlList);
             fclose($sitemap);
         } else {
             $this->logger->error('Failed to open simple sitemap file: {file}. No sitemap generated.', ['file' => $this->simpleSitemapFilename]);
@@ -73,17 +73,8 @@ class CreateSitemap implements Step
                             '<h1>Sitemap</h1>';
 
             $foot = '</body></html>';
-
-            fwrite($sitemap, $head);
-            fwrite($sitemap, $this->parseSubtree($metadata['pageTree'], ''))
-            foreach ($metadata['pageList'] as $page) {
-                $this->logger->debug('Adding {page} to HTML sitemap', ['page' => $page]);
-                $pageUrl = $metadata['baseUrl'].'/'.$page;
-                fwrite($sitemap, $pageUrl.PHP_EOL);
-            }
-
-            fwrite($sitemap, $foot);
-
+            $body = $this->parseSubtree($metadata['pageTree'], '');
+            fwrite($sitemap, $head . $body . $foot);
             fclose($sitemap);
         } else {
             $this->logger->error('Failed to open HTML sitemap file: {file}. No sitemap generated.', ['file' => $this->$htmlSitemapFilename]);
@@ -97,20 +88,24 @@ class CreateSitemap implements Step
 
         foreach ($subtree as $item) {
 
-            // check for type of $item
+            $markup .= '<li>';
+
+            // if array parse subtree
+            if (is_array($item)) {
+                $markup .= $this->parseSubtree($item, $markup);
+            }
 
             // if string, add to markup
+            if (is_string($item)) {
+                $markup .= "<a href='$item' >$item</a>";
+                print_r($item);
+            }
 
-            // if array, parse
+            $markup .= '</li>';
 
         }
 
         $markup .= '</ul>';
         return $markup;
-    }
-
-    private function createSiteLink($href, $text)
-    {
-        return "<li><a href='$href' >$text</a></li>";
     }
 }
