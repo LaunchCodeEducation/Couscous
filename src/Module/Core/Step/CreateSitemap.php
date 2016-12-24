@@ -4,6 +4,8 @@ namespace Couscous\Module\Core\Step;
 
 use Couscous\Model\Project;
 use Couscous\Step;
+use Couscous\Module\Template\Model\HtmlFile;
+use Couscous\Module\Template\Model\TextFile;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -19,6 +21,10 @@ class CreateSitemap implements Step
      */
     private $logger;
 
+    private $pageList = [];
+
+    private $pageTree = [];
+
     /**
      * @var Simple sitemap file (URL list)
      */
@@ -32,80 +38,131 @@ class CreateSitemap implements Step
 
     public function __invoke(Project $project)
     {
-        $this->generateSimpleSitemap($project);
+        $this->generateSiteTree($project);
         $this->generateHtmlSitemap($project);
+        $this->generateSimpleSitemap($project);
     }
 
     private function generateSimpleSitemap(Project $project)
     {
-        $sitemap = fopen($project->targetDirectory.'/'.$this->simpleSitemapFilename, 'w');
+        $urlList = '';
 
-        if ($sitemap) {
-            $metadata = $project->metadata;
-            $urlList = '';
-
-            foreach ($metadata['pageList'] as $page) {
-                $this->logger->debug('Adding {page} to simple sitemap', ['page' => $page]);
-                $pageUrl = $metadata['baseUrl'].'/'.$page;
-                $sitemap .= $pageUrl.PHP_EOL;
-            }
-
-            fwrite($urlList);
-            fclose($sitemap);
-        } else {
-            $this->logger->error('Failed to open simple sitemap file: {file}. No sitemap generated.', ['file' => $this->simpleSitemapFilename]);
+        foreach ($this->pageList as $page) {
+            $this->logger->debug('Adding {page} to simple sitemap', ['page' => $page]);
+            $pageUrl = $project->metadata['baseUrl'].'/'.$page;
+            $urlList .= $pageUrl.PHP_EOL;
         }
 
+        $project->addFile(new TextFile($this->simpleSitemapFilename, $urlList));
     }
 
     private function generateHtmlSitemap(Project $project)
     {
-        $sitemap = fopen($project->targetDirectory.'/'.$this->htmlSitemapFilename, 'w');
+        $pageListMarkup = '<ul>'.self::generateSubtreeMarkup($this->pageTree, '/');
+        $pageListMarkup .= "<li><a href='$this->htmlSitemapFilename'>Sitemap</a></li></ul>";
 
-        if ($sitemap) {
-            $metadata = $project->metadata;
+        $htmlSitemap = new HtmlFile($this->htmlSitemapFilename, $pageListMarkup);
+        $metadata = $htmlSitemap->getMetadata();
+        $metadata['title'] = 'Sitemap';
+        $project->addFile($htmlSitemap);
 
-            $head = '<html>'.
-                        '<head>'.
-                            '<title>Sitemap</title>'.
-                        '</head>'.
-                        '<body>'.
-                            '<h1>Sitemap</h1>';
-
-            $foot = '</body></html>';
-            $body = $this->parseSubtree($metadata['pageTree'], '');
-            fwrite($sitemap, $head . $body . $foot);
-            fclose($sitemap);
-        } else {
-            $this->logger->error('Failed to open HTML sitemap file: {file}. No sitemap generated.', ['file' => $this->$htmlSitemapFilename]);
-        }
-
+        $this->pageTree['Sitemap'] = 'sitemap.html';
+        $this->pageList[] = 'sitemap.html';
     }
 
-    private function parseSubtree($subtree, $markup)
+    private static function generateSubtreeMarkup(&$subtree, $path)
     {
-        $markup .= '<ul>';
+        $markup = '';
 
-        foreach ($subtree as $item) {
+        foreach ($subtree as $key => $item) {
 
             $markup .= '<li>';
 
             // if array parse subtree
             if (is_array($item)) {
-                $markup .= $this->parseSubtree($item, $markup);
+
+                $markup .= '<ul>';
+
+                // Insert labels for dirs w/o an index
+                $pages = array_filter($item, function($i){
+                    return is_string($i);
+                });
+
+                if (sizeof($pages) == 0) {
+                    $dirLabel = ucwords(str_replace('-', ' ', $key));
+                    $markup .= $dirLabel;
+                }
+
+                $markup .= self::generateSubtreeMarkup($item, $path.$key.'/');
+                $markup .= '</ul>';
             }
 
             // if string, add to markup
             if (is_string($item)) {
-                $markup .= "<a href='$item' >$item</a>";
-                print_r($item);
+                $href = $path.$item;
+                $markup .= "<a href='$href'>$key</a>";
             }
 
             $markup .= '</li>';
 
         }
 
-        $markup .= '</ul>';
         return $markup;
     }
+
+    private function generateSiteTree($project) {
+
+        /** @var HtmlFile[] $htmlFiles */
+        $htmlFiles = $project->findFilesByType('Couscous\Module\Template\Model\HtmlFile');
+
+        foreach ($htmlFiles as $file) {
+            $this->pageList[] = $file->relativeFilename;
+
+            $path = dirname($file->relativeFilename);
+            $filename = basename($file->relativeFilename);
+            $fileMetadata = $file->getMetadata();
+
+            if ($path === '.') {
+                $path = [];
+            } else {
+                $path = explode(DIRECTORY_SEPARATOR, $path);
+            }
+
+            $title = $fileMetadata['title'];
+
+            $this->setValue($this->pageTree, $path, $title, $filename);
+        }
+
+        // Sort
+        natsort($this->pageList);
+        self::sortRecursively($this->pageTree);
+    }
+
+    private static function setValue(array &$array, array $path, $key, $value)
+    {
+        if (empty($path)) {
+            $array[$key] = $value;
+
+            return;
+        }
+
+        $dir = array_shift($path);
+
+        if (!array_key_exists($dir, $array)) {
+            $array[$dir] = [];
+        }
+
+        self::setValue($array[$dir], $path, $key, $value);
+    }
+
+    private static function sortRecursively(&$array)
+    {
+        foreach ($array as &$value) {
+            if (is_array($value)) {
+                self::sortRecursively($value);
+            }
+        }
+        ksort($array);
+    }
+
 }
