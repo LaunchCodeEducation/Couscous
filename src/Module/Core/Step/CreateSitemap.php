@@ -38,9 +38,17 @@ class CreateSitemap implements Step
 
     public function __invoke(Project $project)
     {
+        $this->reset();
         $this->generateSiteTree($project);
         $this->generateHtmlSitemap($project);
         $this->generateSimpleSitemap($project);
+    }
+
+    /* Reset when invoking, to clear in-memory cruft */
+    private function reset()
+    {
+        $this->pageList = [];
+        $this->pageTree = [];
     }
 
     private function generateSimpleSitemap(Project $project)
@@ -58,7 +66,8 @@ class CreateSitemap implements Step
 
     private function generateHtmlSitemap(Project $project)
     {
-        $pageListMarkup = '<ul>'.self::generateSubtreeMarkup($this->pageTree, '/');
+
+        $pageListMarkup = '<ul>'.self::generateSubtreeMarkup($this->pageTree, $project->metadata['baseUrl'].'/');
         $pageListMarkup .= "<li><a href='$this->htmlSitemapFilename'>Sitemap</a></li></ul>";
 
         $htmlSitemap = new HtmlFile($this->htmlSitemapFilename, $pageListMarkup);
