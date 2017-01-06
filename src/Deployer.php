@@ -98,8 +98,6 @@ class Deployer
         $finder = new Finder();
         $finder->files()
             ->in($tmpDirectory)
-            ->name('*.html')
-            ->name('sitemap.txt')
             ->ignoreVCS(true);
         $this->filesystem->remove($finder);
 

@@ -26,7 +26,7 @@ class Git
 
     public function checkoutOriginBranch($directory, $branch)
     {
-        $this->run($directory, "git checkout -B $branch origin/$branch");
+        $this->run($directory, "git checkout -b $branch origin/$branch");
     }
 
     public function createBranch($directory, $branch)
