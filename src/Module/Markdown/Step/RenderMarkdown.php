@@ -43,7 +43,18 @@ class RenderMarkdown implements Step
 
         $filename = $this->replaceExtension($file->relativeFilename);
 
-        return new HtmlFile($filename, $document->getContent(), $file);
+        // Add target="_blank" to external links
+        $subject = $document->getContent();
+        $pattern = '/<a href="http[^"]+"/';
+
+        $content = preg_replace_callback($pattern, [$this, 'addAnchorTarget'], $subject);
+
+        return new HtmlFile($filename, $content, $file);
+    }
+
+    private function addAnchorTarget(array $matches)
+    {
+        return $matches[0] . ' target="_blank"';
     }
 
     private function replaceExtension($filename)
