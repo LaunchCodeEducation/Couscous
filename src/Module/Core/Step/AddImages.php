@@ -24,6 +24,7 @@ class AddImages implements Step
         $files
             ->name('*.gif')
             ->name('*.png')
+            ->name('*.pdf')
             ->name('*.jpg');
 
         $project->watchlist->watchFiles($files);
