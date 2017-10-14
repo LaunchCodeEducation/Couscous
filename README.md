@@ -4,6 +4,8 @@ layout: home
 
 Couscous generates a [GitHub pages](http://pages.github.com/) website from your markdown documentation.
 
+For details on setting up Couscous to contribute to LaunchCode Education sites, see [Using Couscous for LaunchCode projects](LCDEVELOPMENT.md).
+
 [![Build Status](https://travis-ci.org/CouscousPHP/Couscous.svg?branch=master)](https://travis-ci.org/CouscousPHP/Couscous)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/CouscousPHP/Couscous/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/CouscousPHP/Couscous/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/CouscousPHP/Couscous/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/CouscousPHP/Couscous/?branch=master)
