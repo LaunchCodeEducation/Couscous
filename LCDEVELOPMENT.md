@@ -8,10 +8,10 @@ We have a customized version of Couscous, so be sure you follow the instructions
 - `brew install node`
 - `brew install homebrew/php/composer`
     ```
-- Make sure you have phar (PHP archive) generation enabled in your `php.ini`. You can find the location of your `php.ini` by running `$ php --ini`. Then ensure the following setting is enabled:
+- Make sure you have phar (PHP archive) generation enabled in your `php.ini`. You can find the location of your `php.ini` by running `$ php --ini`. Then ensure the following setting is enabled `Off`:
 
-    ```
-    phar.readonly = On
+    ```nohighlight
+    phar.readonly = Off
     ```
 
 ### Install Couscous (dev version)
@@ -19,7 +19,7 @@ We have a customized version of Couscous, so be sure you follow the instructions
 Clone this repo, checkout the `lc_develop` branch. Now we will build the Couscous phar/executable and place it in our path.
 
 Pull in dependencies:
-```
+```nohighlight
 $ composer update
 ```
 
@@ -27,14 +27,14 @@ And then:
 
 #### Mac users
 
-```
+```nohighlight
 $ ./build.sh
 ```
 This script will build the project to `bin/couscous.phar`, then install the PHP archive to a path on your filesystem.
 
 #### Windows users
 
-```
+```nohighlight
 $ bin/compile
 ```
 
@@ -55,13 +55,13 @@ Clone one of these sites to your machine. From the `master` branch you can work 
 
 You can run a local server to test changes before deployment by running the following command from the directory of a Couscous project:
 
-```
+```nohighlight
 $ couscous preview
 ```
 
 In each LaunchCode Couscous site, you can run this command to deploy:
 
-```
+```nohighlight
 $ couscous deploy
 ```
 
